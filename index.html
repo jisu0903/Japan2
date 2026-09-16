@@ -269,7 +269,8 @@ const otherWords = [
 let currentSet = [];
 let currentWord = null;
 let showingAnswer = false;
-
+let remainingWords = [];
+    
 const card = document.getElementById("card");
 
 
@@ -295,7 +296,7 @@ function startMode(mode){
     document.getElementById("menu").classList.remove("active");
 
     document.getElementById("study").classList.add("active");
-
+    remainingWords = [];
 
     if(mode === "intro"){
         currentSet = introWords;
@@ -329,10 +330,20 @@ function startMode(mode){
 
 function randomWord(){
 
-    return currentSet[
-        Math.floor(Math.random() * currentSet.length)
-    ];
+    if(remainingWords.length === 0){
 
+        remainingWords = [...currentSet];
+
+        for(let i = remainingWords.length - 1; i > 0; i--){
+
+            const j = Math.floor(Math.random() * (i + 1));
+
+            [remainingWords[i], remainingWords[j]] =
+            [remainingWords[j], remainingWords[i]];
+        }
+    }
+
+    return remainingWords.pop();
 }
 
 

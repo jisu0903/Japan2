@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>일본어 교과서 암기</title>
+
+<style>
+body{
+    margin:0;
+    font-family:sans-serif;
+    background:#f2f2f2;
+}
+
+/* 화면 */
+.screen{
+    display:none;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+.active{
+    display:flex;
+}
+
+/* 메뉴 버튼 */
+.menu-btn{
+    width:260px;
+    padding:18px;
+    margin:10px;
+    font-size:20px;
+    border:none;
+    border-radius:15px;
+    background:white;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    cursor:pointer;
+}
+
+/* 카드 */
+#card{
+    width:320px;
+    height:220px;
+    background:white;
+    border-radius:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    cursor:pointer;
+    padding:20px;
+}
+
+.question{
+    font-size:68px;
+    font-weight:bold;
+}
+
+.kana{
+    font-size:32px;
+    color:#1976d2;
+    font-weight:bold;
+}
+
+.meaning{
+    font-size:22px;
+    margin-top:10px;
+}
+
+/* 뒤로 버튼 */
+.back-btn{
+    position:fixed;
+    top:20px;
+    left:20px;
+    border:none;
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:14px;
+    background:white;
+    box-shadow:0 2px 6px rgba(0,0,0,.2);
+    cursor:pointer;
+}
+
+/* 이전 사이트 버튼 */
+.old-site-btn{
+    width:260px;
+    padding:14px;
+    margin:10px;
+    font-size:16px;
+    border:none;
+    border-radius:15px;
+    background:#e8e8e8;
+    box-shadow:0 3px 8px rgba(0,0,0,.12);
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ======================
+     메인 메뉴
+====================== -->
+
+<div id="menu" class="screen active">
+
+    <h2>📚 일본어 교과서 암기</h2>
+
+    <button class="menu-btn" onclick="startMode('intro')">
+        도입
+    </button>
+
+    <button class="menu-btn" onclick="startMode('lesson1')">
+        1과
+    </button>
+
+    <button class="menu-btn" onclick="startMode('lesson2')">
+        2과
+    </button>
+
+    <button class="menu-btn" onclick="startMode('lesson3')">
+        3과
+    </button>
+
+    <button class="menu-btn" onclick="startMode('other')">
+        기타 한자
+    </button>
+
+    <button class="old-site-btn" onclick="goToOldSite()">
+        ↗ 이전 일본어 암기 사이트
+    </button>
+
+</div>
+
+
+<!-- ======================
+     학습 화면
+====================== -->
+
+<div id="study" class="screen">
+
+    <button class="back-btn" onclick="backMenu()">
+        ← 메뉴
+    </button>
+
+    <div id="card"></div>
+
+</div>
+
+
+<script>
+
+/* ======================
+   도입 단어
+====================== */
+
+const introWords = [
+
+["北海道","ほっかいどう","홋카이도"],
+["本州","ほんしゅう","혼슈"],
+["四国","しこく","시코쿠"],
+["九州","きゅうしゅう","규슈"],
+
+["東北","とうほく","도호쿠"],
+["関東","かんとう","간토"],
+["中部","ちゅうぶ","주부"],
+["近畿","きんき","긴키"],
+["中国","ちゅうごく","주고쿠"],
+
+["青函","せいかん","세이칸 터널"],
+
+["富士山","ふじさん","후지산"],
+["法隆寺","ほうりゅうじ","호류지"],
+["琵琶湖","びわこ","비와호"],
+["長野県","ながのけん","나가노현"],
+["鹿児島県","かごしまけん","가고시마현"],
+["桜島","さくらじま","사쿠라지마"],
+
+["都","と","도"],
+["道","どう","도"],
+["府","ふ","후"],
+["県","けん","현"],
+["市","し","시"],
+["区","く","쿠"],
+["町","ちょう","초"],
+["村","そん","손"],
+["特別区","とくべつく","특별구"],
+
+["京都府","きょうとふ","교토후"],
+["大阪府","おおさかふ","오사카후"],
+["東京都","とうきょうと","도쿄토"],
+
+["日光","にっこう","닛코"],
+["清水寺","きよみずでら","기요미즈데라"],
+["金閣寺","きんかくじ","금각사"],
+["平等院","びょうどういん","뵤도인"],
+["白川郷","しらかわごう","시라카와고"],
+["五箇山","ごかやま","고카야마"],
+["姫路城","ひめじじょう","히메지성"],
+["厳島神社","いつくしまじんじゃ","이쓰쿠시마 신사"],
+
+["北里柴三郎","きたさとしばさぶろう","기타사토 시바사부로"],
+["津田梅子","つだうめこ","쓰다 우메코"],
+["渋沢栄一","しぶさわえいいち","시부사와 에이이치"],
+
+["ご縁","ごえん","인연"],
+
+["奈良","なら","나라"],
+["平安","へいあん","헤이안"],
+["鎌倉","かまくら","가마쿠라"],
+["室町","むろまち","무로마치"],
+["安土桃山","あづちももやま","아즈치모모야마"],
+["江戸","えど","에도"],
+["明治","めいじ","메이지"],
+["大正","たいしょう","다이쇼"],
+["昭和","しょうわ","쇼와"],
+["平成","へいせい","헤이세이"],
+["令和","れいわ","레이와"]
+
+];
+
+
+/* ======================
+   1과
+   나중에 단어 추가
+====================== */
+
+const lesson1Words = [
+
+];
+
+
+/* ======================
+   2과
+   나중에 단어 추가
+====================== */
+
+const lesson2Words = [
+
+];
+
+
+/* ======================
+   3과
+   나중에 단어 추가
+====================== */
+
+const lesson3Words = [
+
+];
+
+
+/* ======================
+   기타 한자
+   나중에 단어 추가
+====================== */
+
+const otherWords = [
+
+];
+
+
+/* ======================
+   상태
+====================== */
+
+let currentSet = [];
+let currentWord = null;
+let showingAnswer = false;
+
+const card = document.getElementById("card");
+
+
+/* ======================
+   메뉴 이동
+====================== */
+
+function backMenu(){
+
+    document.getElementById("study").classList.remove("active");
+
+    document.getElementById("menu").classList.add("active");
+
+}
+
+
+/* ======================
+   모드 선택
+====================== */
+
+function startMode(mode){
+
+    document.getElementById("menu").classList.remove("active");
+
+    document.getElementById("study").classList.add("active");
+
+
+    if(mode === "intro"){
+        currentSet = introWords;
+    }
+
+    else if(mode === "lesson1"){
+        currentSet = lesson1Words;
+    }
+
+    else if(mode === "lesson2"){
+        currentSet = lesson2Words;
+    }
+
+    else if(mode === "lesson3"){
+        currentSet = lesson3Words;
+    }
+
+    else if(mode === "other"){
+        currentSet = otherWords;
+    }
+
+
+    showQuestion();
+
+}
+
+
+/* ======================
+   랜덤 단어
+====================== */
+
+function randomWord(){
+
+    return currentSet[
+        Math.floor(Math.random() * currentSet.length)
+    ];
+
+}
+
+
+/* ======================
+   문제 표시
+====================== */
+
+function showQuestion(){
+
+    if(currentSet.length === 0){
+
+        card.innerHTML =
+        `<div class="meaning">
+            아직 단어가 없습니다.
+        </div>`;
+
+        currentWord = null;
+        showingAnswer = false;
+
+        return;
+    }
+
+
+    currentWord = randomWord();
+
+    card.innerHTML =
+    `<div class="question">
+        ${currentWord[0]}
+    </div>`;
+
+    showingAnswer = false;
+
+}
+
+
+/* ======================
+   정답 표시
+====================== */
+
+function showAnswer(){
+
+    card.innerHTML =
+
+    `<div class="kana">
+        ${currentWord[1]}
+    </div>
+
+     <div class="meaning">
+        ${currentWord[2]}
+     </div>`;
+
+    showingAnswer = true;
+
+}
+
+
+/* ======================
+   카드 터치
+====================== */
+
+card.addEventListener("click", ()=>{
+
+    if(!currentWord) return;
+
+    if(showingAnswer){
+
+        showQuestion();
+
+    }
+
+    else{
+
+        showAnswer();
+
+    }
+
+});
+
+
+/* ======================
+   이전 사이트 이동
+====================== */
+
+function goToOldSite(){
+
+    window.location.href =
+    "https://jisu0903.github.io/Doubleslit/";
+
+}
+
+</script>
+
+</body>
+</html>

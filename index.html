@@ -124,6 +124,10 @@ body{
         3과
     </button>
 
+    <button class="menu-btn" onclick="startMode('all')">
+    전체 연습
+    </button>
+
     <button class="menu-btn" onclick="startMode('other')">
         기타 한자
     </button>
@@ -300,6 +304,17 @@ const lesson3Words = [
    나중에 단어 추가
 ====================== */
 
+/* ======================
+   전체 연습
+====================== */
+
+const allWords = [
+    ...introWords,
+    ...lesson1Words,
+    ...lesson2Words,
+    ...lesson3Words,
+    ...otherWords
+];
 const otherWords = [
 
 ];
@@ -360,6 +375,10 @@ function startMode(mode){
     else if(mode === "other"){
         currentSet = otherWords;
     }
+        
+    else if(mode === "all"){
+    currentSet = allWords;
+}
 
 
     showQuestion();
